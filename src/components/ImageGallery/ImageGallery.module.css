@@ -1,0 +1,10 @@
+.ImageGallery {
+  display: grid;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 48px);
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-gap: 16px;
+  margin: 20px 20px 20px 20px;
+  padding: 0;
+  list-style: none;
+}
