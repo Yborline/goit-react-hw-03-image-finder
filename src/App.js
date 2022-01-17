@@ -8,16 +8,20 @@ class App extends Component {
     imgName: "",
     page: 1,
   };
+  sevPage = (number) => {
+    this.setState({ page: number });
+  };
 
   saveState = (name) => {
     this.setState({ imgName: name });
   };
 
   render() {
+    const { imgName } = this.state;
     return (
       <div className={s.body}>
         <Searchbar onSubmit={this.saveState} />
-        <ImageGallery page={this.state.page} imgName={this.state.imgName} />
+        <ImageGallery page={this.sevPage} imgName={imgName} />
       </div>
     );
   }

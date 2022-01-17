@@ -4,13 +4,17 @@ import Button from "../Button/Button";
 import Loader from "../Loader/Loader";
 import Modal from "../Modal/Modal";
 import s from "../ImageGallery/ImageGallery.module.css";
+import api from "../../api/api";
+import PropTypes from "prop-types";
 
-class ImageInfo extends Component {
+class ImageGallery extends Component {
+  static propTypes = {
+    page: PropTypes.func.isRequired,
+  };
   state = {
     images: [],
     error: "",
     status: "idle",
-    numberImage: 12,
     showModal: false,
     largeImage: "",
     alt: "",
@@ -38,47 +42,35 @@ class ImageInfo extends Component {
   };
 
   openModal = (event) => {
-    console.log(event.target);
+    const { dataset, alt } = event.target;
     this.setState(({ showModal }) => ({
       showModal: !showModal,
-      largeImage: event.target.dataset.src,
-      alt: event.target.dataset.alt,
+      largeImage: dataset.src,
+      alt: alt,
     }));
   };
 
   componentDidUpdate(prevProps, prevState) {
     const prevName = prevProps.imgName;
     const nextName = this.props.imgName;
-
-    const { numberImage, page } = this.state;
-    console.log(prevState.page);
-    console.log(page);
-
+    const { page } = this.state;
     if (prevName !== nextName) {
-      const KEY = "24295658-d33a4cb7a7ba959c48fb9a807";
-
       this.setState({ status: "pending" });
-      fetch(
-        `https://pixabay.com/api/?key=${KEY}&q=${nextName}&page=${page}&image_type=photo&per_page=${numberImage}`
-      )
-        .then((response) => {
-          if (!response.ok) {
-            return Promise.reject(
-              new Error(`Нет картинки с именем ${nextName}`)
-            );
-          }
-
-          return response.json();
+      api
+        .fetchImages(nextName, page)
+        .then((images) =>
+          this.setState({ images: [...images.hits], status: "resolved" })
+        );
+    }
+    if (prevState.page !== page) {
+      this.setState({ status: "pending" });
+      api.fetchImages(nextName, page).then((images) =>
+        this.setState({
+          images: [...this.state.images, ...images.hits],
+          status: "resolved",
         })
-        .then((newImages) =>
-          this.setState({
-            images: [...this.state.images, ...newImages.hits],
-            status: "resolved",
-          })
-        ).catch = (error) => {
-        this.setState({ error: error.message, status: "rejected" });
-        if (this.page !== 1) this.scrollToBottom();
-      };
+      );
+      this.scrollToBottom();
     }
   }
 
@@ -90,22 +82,27 @@ class ImageInfo extends Component {
 
   render() {
     const { images, error, status, showModal, alt, largeImage } = this.state;
-
+    <div></div>;
     if (status === "idle") {
-      return <div>Введите название </div>;
+      return <div className={s.text}>Введите название </div>;
     }
     if (status === "pending") {
-      return <Loader />;
+      return (
+        <div className={s.text}>
+          <Loader />
+        </div>
+      );
     }
     if (status === "rejected") {
-      return <h1>{error.message}</h1>;
+      return <h1 className={s.text}>{error.message}</h1>;
     }
     if (images.length === 0) {
-      return <p>Такого запроса не существует</p>;
+      return <p className={s.text}>Такого запроса не существует</p>;
     }
+
     if (status === "resolved") {
       return (
-        <div>
+        <div className={s.content}>
           <ul className={s.ImageGallery}>
             {images.map(({ id, webformatURL, tags, largeImageURL }) => (
               <ImageGalleryItem
@@ -122,19 +119,48 @@ class ImageInfo extends Component {
                 onClose={this.closeModal}
                 alt={alt}
                 largeImage={largeImage}
-              >
-                <button onClick={this.closeModal} type="button">
-                  Close
-                </button>
-              </Modal>
+              />
             )}
           </ul>
           <Button onClick={this.loadNextPage} />
         </div>
       );
     }
+
     return null;
   }
 }
 
-export default ImageInfo;
+export default ImageGallery;
+
+// const KEY = "24295658-d33a4cb7a7ba959c48fb9a807";
+
+//     this.setState({ status: "pending" });
+//     fetch(
+//       `https://pixabay.com/api/?key=${KEY}&q=${nextName}&page=${page}&image_type=photo&per_page=${numberImage}`
+//     )
+//       .then((response) => {
+//         if (!response.ok) {
+//           return Promise.reject(
+//             new Error(`Нет картинки с именем ${nextName}`)
+//           );
+//         }
+
+//         return response.json();
+//       })
+//         .then((newImages) =>{
+//             if (newImages === this.state.images) {
+//                  this.setState({
+//           images: [...newImages.hits],
+//           status: "resolved",
+//         })
+
+//           }
+//         this.setState({
+//           images: [...this.state.images, ...newImages.hits],
+//           status: "resolved",
+//         })}
+//       ).catch = (error) => {
+//       this.setState({ error: error.message, status: "rejected" });
+//       if (this.page !== 1) this.scrollToBottom();
+//     };

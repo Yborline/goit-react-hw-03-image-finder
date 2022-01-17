@@ -1,8 +1,10 @@
-.App {
-  display: grid;
+.body {
   grid-template-columns: 1fr;
   grid-gap: 16px;
   padding-bottom: 24px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
 }
 
 .AppLogo {
@@ -38,4 +40,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.additionally {
+  display: flex;
+  text-align: center;
+  justify-content: center;
 }

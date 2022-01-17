@@ -1,10 +1,16 @@
 import s from "../Modal/Modal.module.css";
 import { Component } from "react";
 import { createPortal } from "react-dom";
+import PropTypes from "prop-types";
 
 const modalRoot = document.querySelector("#modal-root");
 
 class Modal extends Component {
+  static propTypes = {
+    onClose: PropTypes.func.isRequired,
+    alt: PropTypes.string.isRequired,
+    largeImage: PropTypes.string.isRequired,
+  };
   componentDidMount() {
     window.addEventListener("keydown", this.handleKeyDown);
   }
@@ -12,8 +18,8 @@ class Modal extends Component {
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
   }
-  handleKeyDown = (e) => {
-    if (e.code === "Escape") {
+  handleKeyDown = (event) => {
+    if (event.code === "Escape") {
       this.props.onClose();
     }
   };
