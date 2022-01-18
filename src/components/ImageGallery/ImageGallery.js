@@ -9,9 +9,10 @@ import PropTypes from "prop-types";
 
 class ImageGallery extends Component {
   static propTypes = {
-    page: PropTypes.func.isRequired,
+    page: PropTypes.number.isRequired,
   };
   state = {
+    name: "",
     images: [],
     error: "",
     status: "idle",
@@ -41,28 +42,16 @@ class ImageGallery extends Component {
     }));
   };
 
-  openModal = (event) => {
-    const { dataset, alt } = event.target;
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-      largeImage: dataset.src,
-      alt: alt,
-    }));
-  };
-
   componentDidUpdate(prevProps, prevState) {
     const prevName = prevProps.imgName;
     const nextName = this.props.imgName;
     const { page } = this.state;
+
     if (prevName !== nextName) {
-      this.setState({ status: "pending" });
-      api
-        .fetchImages(nextName, page)
-        .then((images) =>
-          this.setState({ images: [...images.hits], status: "resolved" })
-        );
+      this.setState({ images: [], page: 1 });
     }
-    if (prevState.page !== page) {
+
+    if ((prevProps !== this.props && page === 1) || prevState.page !== page) {
       this.setState({ status: "pending" });
       api.fetchImages(nextName, page).then((images) =>
         this.setState({
@@ -70,7 +59,7 @@ class ImageGallery extends Component {
           status: "resolved",
         })
       );
-      this.scrollToBottom();
+      if (page !== 1) this.scrollToBottom();
     }
   }
 
@@ -78,6 +67,14 @@ class ImageGallery extends Component {
     this.setState({
       numberImage: number,
     });
+  };
+
+  openModal = ({ alt, largeURL }) => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+      largeImage: largeURL,
+      alt: alt,
+    }));
   };
 
   render() {
@@ -112,7 +109,7 @@ class ImageGallery extends Component {
                 url={webformatURL}
                 alt={tags}
                 largeURL={largeImageURL}
-              ></ImageGalleryItem>
+              />
             ))}
             {showModal && (
               <Modal

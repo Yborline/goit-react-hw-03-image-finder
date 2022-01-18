@@ -10,6 +10,7 @@ class Searchbar extends Component {
 
   state = {
     nameImg: "",
+    page: 1,
   };
 
   reset() {
@@ -24,13 +25,14 @@ class Searchbar extends Component {
   };
 
   handleSubmit = (event) => {
-    const { nameImg } = this.state;
+    const { nameImg, page } = this.state;
     event.preventDefault();
     if (nameImg.trim() === "") {
       alert("Введите название");
       return;
     }
     this.props.onSubmit(nameImg);
+    this.props.page(page);
     this.reset();
   };
 

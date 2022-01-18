@@ -6,7 +6,7 @@ const ImageGalleryItem = ({ url, alt, id, onClick, largeURL }) => {
     <li ket={id} className={s.ImageGalleryItemImage}>
       <img
         className={s.img}
-        onClick={onClick}
+        onClick={() => onClick({ alt, largeURL })}
         src={url}
         alt={alt}
         data-src={largeURL}

@@ -17,11 +17,11 @@ class App extends Component {
   };
 
   render() {
-    const { imgName } = this.state;
+    const { imgName, page } = this.state;
     return (
       <div className={s.body}>
-        <Searchbar onSubmit={this.saveState} />
-        <ImageGallery page={this.sevPage} imgName={imgName} />
+        <Searchbar page={this.sevPage} onSubmit={this.saveState} />
+        <ImageGallery page={page} imgName={imgName} />
       </div>
     );
   }
