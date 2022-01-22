@@ -86,7 +86,26 @@ class ImageGallery extends Component {
     if (status === "pending") {
       return (
         <div className={s.text}>
-          <Loader />
+          <ul className={s.ImageGallery}>
+            {images.map(({ id, webformatURL, tags, largeImageURL }) => (
+              <ImageGalleryItem
+                onClick={this.openModal}
+                className={s.ImageGalleryItemImag}
+                key={id}
+                url={webformatURL}
+                alt={tags}
+                largeURL={largeImageURL}
+              />
+            ))}
+            <Loader />
+            {showModal && (
+              <Modal
+                onClose={this.closeModal}
+                alt={alt}
+                largeImage={largeImage}
+              />
+            )}
+          </ul>
         </div>
       );
     }
