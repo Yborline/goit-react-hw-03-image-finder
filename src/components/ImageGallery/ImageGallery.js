@@ -91,6 +91,7 @@ class ImageGallery extends Component {
     if (status === "resolved" || status === "pending") {
       return (
         <div className={s.text}>
+          {loading === true ? <Loader /> : ""}
           <ul className={s.ImageGallery}>
             {images.map(({ id, webformatURL, tags, largeImageURL }) => (
               <ImageGalleryItem
@@ -110,7 +111,6 @@ class ImageGallery extends Component {
               largeImage={largeImage}
             />
           )}
-
           {images.length > 0 ? (
             <Button onClick={this.loadNextPage} />
           ) : (
@@ -120,13 +120,6 @@ class ImageGallery extends Component {
       );
     }
 
-    if (loading) {
-      return (
-        <div className={s.text}>
-          <Loader />
-        </div>
-      );
-    }
     if (status === "rejected") {
       return <h1 className={s.text}>{error.message}</h1>;
     }
