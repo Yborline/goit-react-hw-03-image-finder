@@ -20,7 +20,6 @@ class ImageGallery extends Component {
     largeImage: "",
     alt: "",
     page: 1,
-    loading: false,
   };
   scrollToBottom = () => {
     window.scrollTo({
@@ -49,7 +48,7 @@ class ImageGallery extends Component {
     const { page } = this.state;
 
     if (prevName !== nextName) {
-      this.setState({ images: [], page: 1, loading: true });
+      this.setState({ images: [], page: 1 });
     }
 
     if ((prevProps !== this.props && page === 1) || prevState.page !== page) {
@@ -58,7 +57,6 @@ class ImageGallery extends Component {
         this.setState({
           images: [...this.state.images, ...images.hits],
           status: "resolved",
-          loading: false,
         })
       );
       if (page !== 1) this.scrollToBottom();
@@ -87,11 +85,12 @@ class ImageGallery extends Component {
     if (status === "idle") {
       return <div className={s.text}>Введите название </div>;
     }
-
+    if (status === "pending") {
+      return <Loader />;
+    }
     if (status === "resolved" || status === "pending") {
       return (
         <div className={s.text}>
-          {loading === true ? <Loader /> : ""}
           <ul className={s.ImageGallery}>
             {images.map(({ id, webformatURL, tags, largeImageURL }) => (
               <ImageGalleryItem
